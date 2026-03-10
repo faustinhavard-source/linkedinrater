@@ -97,6 +97,23 @@ textarea { resize: vertical; }
 
 .hashtag-row { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
 
+.algo-card { background:#0d1117; border:1px solid #30363d; border-radius:12px; padding:1.5rem; margin-bottom:12px; position:relative; overflow:hidden; }
+.algo-card::before { content:''; position:absolute; top:0; left:0; right:0; height:32px; background:linear-gradient(180deg, rgba(48,54,61,0.4) 0%, transparent 100%); pointer-events:none; }
+.algo-header { display:flex; align-items:center; gap:8px; margin-bottom:14px; }
+.algo-dots { display:flex; gap:6px; }
+.algo-dots span { width:10px; height:10px; border-radius:50%; }
+.algo-title { font-family:'JetBrains Mono',monospace; font-size:11px; color:#8b949e; margin-left:8px; }
+.algo-text { font-family:'JetBrains Mono',monospace; font-size:12.5px; line-height:1.8; color:#c9d1d9; white-space:pre-wrap; }
+.algo-text .algo-prompt { color:#7ee787; }
+.algo-text .algo-signal { color:#79c0ff; }
+.algo-text .algo-warn { color:#f0883e; }
+
+.strat-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.strat-item { background:#f7f8fa; border-radius:10px; padding:14px 16px; }
+.strat-icon { font-size:16px; margin-bottom:6px; }
+.strat-label { font-size:11px; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; }
+.strat-value { font-size:13px; color:#1a1a2e; line-height:1.5; }
+
 .media-wrap { position:relative; display:inline-block; }
 .media-wrap img { max-height:180px; max-width:100%; border-radius:10px; border:none; object-fit:contain; box-shadow:0 1px 3px rgba(0,0,0,0.08); }
 .media-badge { position:absolute; top:8px; left:8px; font-size:11px; font-weight:500; padding:3px 10px; border-radius:6px; }
@@ -140,6 +157,7 @@ textarea { resize: vertical; }
   .header-title { font-size: 18px; }
   .score-grid { grid-template-columns: repeat(2, 1fr); }
   .feedback-grid { grid-template-columns: 1fr; }
+  .strat-grid { grid-template-columns: 1fr; }
   .grid2 { grid-template-columns: 1fr; }
   .verdict-header { flex-direction: column; gap: 16px; }
   .btn-analyze { width: 100%; }
@@ -253,6 +271,19 @@ textarea { resize: vertical; }
     </div>
     <div class="score-grid" id="score-grid"></div>
 
+    <!-- Algorithm Take -->
+    <div class="algo-card" id="algo-card">
+      <div class="algo-header">
+        <div class="algo-dots">
+          <span style="background:#f85149"></span>
+          <span style="background:#d29922"></span>
+          <span style="background:#3fb950"></span>
+        </div>
+        <span class="algo-title">linkedin_algorithm.exe</span>
+      </div>
+      <div class="algo-text" id="algo-text"></div>
+    </div>
+
     <!-- 2. Feedback -->
     <div class="divider"><span>Feedback</span><hr /></div>
     <div class="feedback-grid">
@@ -274,10 +305,10 @@ textarea { resize: vertical; }
         <p class="hook-text" id="hook-text"></p>
       </div>
     </div>
-    <div class="card" style="margin-top:12px;">
-      <div class="card-title">Posting tip</div>
-      <p style="font-size:14px; line-height:1.65; color:#374151;" id="posting-tip"></p>
-      <div style="margin-top:10px;" id="hashtag-row"></div>
+    <div class="divider"><span>Posting Strategy</span><hr /></div>
+    <div class="card">
+      <div class="strat-grid" id="strat-grid"></div>
+      <div style="margin-top:14px; padding-top:12px; border-top:1px solid #f3f4f6;" id="hashtag-row"></div>
     </div>
 
     <!-- 4. Expected Performance -->
@@ -329,8 +360,14 @@ Respond ONLY with valid JSON:
   "expected_engagement_rate": "% estimate",
   "pros": ["2-3 specific strengths"],
   "cons": ["2-3 specific improvements"],
+  "algorithm_perspective": "Write 3-5 lines AS the LinkedIn algorithm in first person. 'When I see this post...' What signals you detect, how you'd distribute it, what would make you boost or suppress it. Be specific and technical.",
   "hook_rewrite": "Rewrite the first 2-3 lines only. Keep the author's voice. Create curiosity.",
-  "posting_tip": "1-2 sentences: best time to post, link strategy, one key tactic",
+  "posting_strategy": {
+    "best_time": "Specific day + time window recommendation based on the posting context",
+    "first_hour": "What to do in the first 60 minutes after posting (1-2 sentences)",
+    "link_strategy": "Where to put links: no link / first comment / edit after 1h. Be specific.",
+    "engagement_play": "One concrete tactic to boost engagement (who to tag, what to ask, etc.)"
+  },
   "hashtags": ["3 max"]
 }`;
 
@@ -430,7 +467,7 @@ async function analyze() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 3000,
+        max_tokens: 4000,
         system: SYSTEM_PROMPT,
         messages: [{ role:'user', content:msgContent }]
       })
@@ -478,13 +515,36 @@ function renderResults(r) {
   document.getElementById('pros-list').innerHTML = (r.pros||[]).map(i => `<li><span class="pt-dot dot-g"></span><span>${i}</span></li>`).join('');
   document.getElementById('cons-list').innerHTML = (r.cons||[]).map(i => `<li><span class="pt-dot dot-b"></span><span>${i}</span></li>`).join('');
 
+  // Algorithm perspective (terminal style)
+  const algoRaw = r.algorithm_perspective || '';
+  const algoFormatted = algoRaw
+    .replace(/^(>|When I see|When I process|When this post hits)/gm, '<span class="algo-prompt">$&</span>')
+    .replace(/(dwell time|see more|comment|save|share|reaction|engagement|click-through|suppress|boost|amplif|distribut|viral|seed|quality score)/gi, '<span class="algo-signal">$1</span>')
+    .replace(/(penali|kill|suppress|spam|bait|dead|flat|risk|danger|warning|problem)/gi, '<span class="algo-warn">$1</span>');
+  document.getElementById('algo-text').innerHTML = '<span class="algo-prompt">&gt; </span>' + algoFormatted;
+
   // Hook rewrite
   document.getElementById('hook-text').textContent = r.hook_rewrite || '';
 
-  // Posting tip & hashtags
-  document.getElementById('posting-tip').textContent = r.posting_tip || r.posting_strategy || '';
+  // Posting strategy grid
+  const strat = r.posting_strategy || {};
+  const stratItems = typeof strat === 'string'
+    ? [{ icon:'&#128337;', label:'Tip', value:strat }]
+    : [
+        { icon:'&#128337;', label:'Best time', value:strat.best_time || '' },
+        { icon:'&#9889;', label:'First hour', value:strat.first_hour || '' },
+        { icon:'&#128279;', label:'Link strategy', value:strat.link_strategy || '' },
+        { icon:'&#127919;', label:'Engagement play', value:strat.engagement_play || '' },
+      ].filter(s => s.value);
+  document.getElementById('strat-grid').innerHTML = stratItems.map(s =>
+    `<div class="strat-item"><div class="strat-icon">${s.icon}</div><div class="strat-label">${s.label}</div><div class="strat-value">${s.value}</div></div>`
+  ).join('');
+
+  // Hashtags
   const hashtagTags = Array.isArray(r.hashtags) ? r.hashtags : (r.hashtags?.tags || []);
-  document.getElementById('hashtag-row').innerHTML = hashtagTags.map(h=>`<span class="tag tag-blue">#${h.replace('#','')}</span>`).join('');
+  document.getElementById('hashtag-row').innerHTML = hashtagTags.length
+    ? '<span style="font-size:11px;font-weight:500;color:#6b7280;margin-right:4px;">Hashtags</span>' + hashtagTags.map(h=>`<span class="tag tag-blue">#${h.replace('#','')}</span>`).join('')
+    : '';
 
   // Performance
   document.getElementById('perf-grid').innerHTML = [
