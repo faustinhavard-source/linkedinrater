@@ -68,7 +68,7 @@ textarea { resize: vertical; }
 .overall-score { font-size:56px; font-weight:700; line-height:1; font-family:'JetBrains Mono',monospace; }
 .overall-lbl { font-size:11px; font-weight:500; color:#9ca3af; margin-top:4px; }
 
-.score-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:12px; margin-bottom:24px; }
+.score-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin-bottom:12px; }
 .score-card { background:#fff; border:1px solid rgba(0,0,0,0.04); border-radius:12px; padding:16px 14px; text-align:center; box-shadow:0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02); transition:box-shadow 0.2s ease; }
 .score-card:hover { box-shadow:0 2px 8px rgba(0,0,0,0.06); }
 .score-grade { font-size:28px; font-weight:700; font-family:'JetBrains Mono',monospace; line-height:1; margin-bottom:6px; }
@@ -81,9 +81,7 @@ textarea { resize: vertical; }
 .perf-sub { font-size:11px; color:#9ca3af; margin-top:2px; }
 
 .feedback-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
-.feedback-col-r { display:flex; flex-direction:column; gap:12px; }
 .fb-card { background:#fff; border:1px solid rgba(0,0,0,0.04); border-radius:12px; padding:1.25rem 1.5rem; box-shadow:0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02); }
-.fb-card.killers { border-color:rgba(239,68,68,0.12); background:#fef7f7; display:none; }
 
 .pt-list { list-style:none; }
 .pt-list li { display:flex; gap:10px; padding:8px 0; font-size:14px; line-height:1.6; color:#374151; border-bottom:1px solid #f3f4f6; }
@@ -97,12 +95,7 @@ textarea { resize: vertical; }
 .copy-btn { position:absolute; top:12px; right:12px; background:#fff; border:1px solid #eeeef0; color:#6b7280; font-size:12px; font-weight:500; padding:4px 12px; border-radius:6px; cursor:pointer; transition:all 0.15s ease; }
 .copy-btn:hover { border-color:#3b82f6; color:#3b82f6; }
 
-.strat-list { list-style:none; display:flex; flex-direction:column; gap:8px; }
-.strat-list li { display:flex; gap:12px; align-items:flex-start; }
-.strat-bullet { color:#3b82f6; font-weight:600; font-size:14px; line-height:1.6; flex-shrink:0; }
-
-.hashtag-row { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
-.hashtag-tip { font-size:13px; color:#6b7280; line-height:1.5; }
+.hashtag-row { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
 
 .media-wrap { position:relative; display:inline-block; }
 .media-wrap img { max-height:180px; max-width:100%; border-radius:10px; border:none; object-fit:contain; box-shadow:0 1px 3px rgba(0,0,0,0.08); }
@@ -139,15 +132,7 @@ textarea { resize: vertical; }
 #results { display:none; }
 
 .score-detail { font-size:10px; color:#9ca3af; margin-top:4px; line-height:1.3; max-height:32px; overflow:hidden; }
-.score-num { font-size:11px; font-weight:500; color:#6b7280; font-family:'JetBrains Mono',monospace; margin-top:2px; }
 
-.buzz-card { background:#fffbeb; border:none; border-left:3px solid #f59e0b; border-radius:0 12px 12px 0; padding:1.25rem 1.5rem; margin-bottom:12px; box-shadow:0 1px 3px rgba(0,0,0,0.04); }
-.buzz-card .card-title { color:#b45309; }
-.buzz-score-badge { display:inline-flex; align-items:center; gap:6px; font-family:'JetBrains Mono',monospace; font-size:20px; font-weight:700; margin-bottom:8px; }
-
-.algo-card { background:#1a1a2e; border:none; border-radius:12px; padding:1.5rem; margin-bottom:12px; box-shadow:0 2px 8px rgba(0,0,0,0.12); }
-.algo-card .card-title { color:rgba(255,255,255,0.5); }
-.algo-text { font-size:14px; line-height:1.7; color:rgba(255,255,255,0.85); font-style:italic; }
 
 
 @media (max-width: 640px) {
@@ -155,7 +140,6 @@ textarea { resize: vertical; }
   .header-title { font-size: 18px; }
   .score-grid { grid-template-columns: repeat(2, 1fr); }
   .feedback-grid { grid-template-columns: 1fr; }
-  .perf-grid { grid-template-columns: 1fr; }
   .grid2 { grid-template-columns: 1fr; }
   .verdict-header { flex-direction: column; gap: 16px; }
   .btn-analyze { width: 100%; }
@@ -253,82 +237,53 @@ textarea { resize: vertical; }
   <button class="btn-analyze" id="analyze-btn" onclick="analyze()">Analyze</button>
 
   <div id="results">
-    <div class="divider"><span>Analysis Results</span><hr /></div>
+    <!-- 1. Score & Verdict -->
+    <div class="divider"><span>Analysis</span><hr /></div>
     <div class="card">
       <div class="verdict-header">
         <div>
           <div class="overall-score" id="res-score"></div>
           <div class="overall-lbl">Overall Score</div>
         </div>
-        <div>
-          <div class="lbl">Post type</div>
-          <div style="font-weight:600; font-size:14px;" id="res-type"></div>
-        </div>
-        <div style="flex:1; min-width:140px;">
-          <div class="lbl">Target audience</div>
-          <div style="font-weight:500; font-size:13px; color:#374151;" id="res-audience"></div>
+        <div style="flex:1;">
+          <span class="tag tag-blue" id="res-type"></span>
         </div>
       </div>
       <p style="font-size:14px; line-height:1.65; color:#374151;" id="res-verdict"></p>
     </div>
-
-    <div class="divider"><span>Score Breakdown</span><hr /></div>
     <div class="score-grid" id="score-grid"></div>
 
-    <div class="divider"><span>Algorithm Perspective</span><hr /></div>
-    <div class="algo-card" id="algo-card">
-      <div class="card-title">The algorithm speaks</div>
-      <p class="algo-text" id="algo-text"></p>
-    </div>
-
-    <div class="divider"><span>Buzz Potential</span><hr /></div>
-    <div class="buzz-card" id="buzz-card">
-      <div class="card-title">Buzz analysis</div>
-      <div class="buzz-score-badge" id="buzz-badge"></div>
-      <p style="font-size:14px; line-height:1.65; color:#92400e;" id="buzz-text"></p>
-    </div>
-
-    <div class="perf-card">
-      <div class="lbl" style="margin-bottom:12px;">Expected performance</div>
-      <div class="perf-grid" id="perf-grid"></div>
-    </div>
-
+    <!-- 2. Feedback -->
     <div class="divider"><span>Feedback</span><hr /></div>
     <div class="feedback-grid">
       <div class="fb-card">
         <div class="card-title">What's working</div>
         <ul class="pt-list" id="pros-list"></ul>
       </div>
-      <div class="feedback-col-r">
-        <div class="fb-card">
-          <div class="card-title">What to change</div>
-          <ul class="pt-list" id="cons-list"></ul>
-        </div>
-        <div class="fb-card killers" id="killers-card">
-          <div class="card-title" style="color:#dc2626;">Algorithm killers</div>
-          <ul class="pt-list" id="killers-list"></ul>
-        </div>
+      <div class="fb-card">
+        <div class="card-title">What to improve</div>
+        <ul class="pt-list" id="cons-list"></ul>
       </div>
     </div>
 
+    <!-- 3. Hook Rewrite & Posting -->
     <div class="divider"><span>Hook Rewrite</span><hr /></div>
     <div class="card">
-      <div class="card-title">Suggested hook</div>
       <div class="hook-box">
         <button class="copy-btn" id="copy-btn" onclick="copyHook()">Copy</button>
         <p class="hook-text" id="hook-text"></p>
       </div>
     </div>
-
-    <div class="divider"><span>Posting Strategy</span><hr /></div>
-    <div class="card">
-      <div class="card-title">When and how to post</div>
-      <ul class="strat-list" id="strat-list"></ul>
+    <div class="card" style="margin-top:12px;">
+      <div class="card-title">Posting tip</div>
+      <p style="font-size:14px; line-height:1.65; color:#374151;" id="posting-tip"></p>
+      <div style="margin-top:10px;" id="hashtag-row"></div>
     </div>
 
-    <div class="divider"><span>Hashtags</span><hr /></div>
-    <div class="card">
-      <div class="hashtag-row" id="hashtag-row"></div>
+    <!-- 4. Expected Performance -->
+    <div class="divider"><span>Expected Performance</span><hr /></div>
+    <div class="perf-card">
+      <div class="perf-grid" id="perf-grid"></div>
     </div>
   </div>
 
@@ -343,184 +298,42 @@ textarea { resize: vertical; }
 
 </div>
 <script>
-const SYSTEM_PROMPT = `You are a dual-brain LinkedIn post analyzer. You combine:
-1. A senior content strategist with deep knowledge of LinkedIn algorithm mechanics
-2. An "Algorithm Agent" — you simulate how LinkedIn's algorithm actually processes, scores, and distributes a post
+const SYSTEM_PROMPT = `You are a LinkedIn post analyst. Give concise, actionable feedback.
 
-Your analysis is grounded in real data from Seb Johnson's LinkedIn workshops and Richard van der Blom's algorithm research (1.8M posts analyzed).
+## CONTEXT
+Posts come from Entrepreneurs First (EF) employees — talent investors, GMs, founders. Typically 1,000–5,000 followers in European tech.
 
----
+REALISTIC ESTIMATES: Be conservative. Most posts with 1k-3k followers get 2,000-8,000 impressions. A good post gets 5,000-15,000. Estimate LOW — better to surprise than disappoint.
 
-## ABOUT ENTREPRENEURS FIRST (EF)
-EF is the world's leading talent-first startup program. Recruits exceptional individuals BEFORE they have a startup idea or cofounder, helps them find a cofounder and backs them at company formation. Offices: London, Paris, Berlin, Singapore, New York. 500+ companies. Notable alumni: Cleo, PolyAI, Tractable, Magic Pony (acq. Twitter).
+## KEY LINKEDIN RULES
+- Dwell time and "see more" clicks are the top signals
+- First 60 minutes determine 60% of total reach
+- Comments worth 5x reactions. Reply to all comments fast.
+- External links in post = -40-60% reach. Put links in first comment.
+- Best posting: Tue-Thu, 8h-10h. Worst: Fri afternoon, weekends.
+- Max 3 hashtags, niche-specific only.
 
-Posts come from individual EF employees (TIs, GMs, Partners), NOT the company page. They typically have 1,000–5,000 followers in a niche European tech network.
-
-CRITICAL — REALISTIC PERFORMANCE CALIBRATION:
-Be CONSERVATIVE with all estimates. Users are disappointed when real results fall short. Use these realistic benchmarks:
-- Most posts from accounts with 1,000-3,000 followers get 2,000-8,000 impressions
-- A good post gets 5,000-15,000 impressions. This is already a win.
-- Only exceptional viral posts (top 5%) break 30,000-50,000 impressions
-- 100,000+ impressions is extremely rare — do NOT estimate this unless the post is truly exceptional AND the author has 5,000+ followers
-- Average engagement rate is ~3.85%. Most posts land between 2-5%
-- A typical post gets 5-15 comments and 1-5 shares. More than 20 comments is strong.
-- ALWAYS estimate on the LOW end of what you think is realistic. It is better to pleasantly surprise users than to disappoint them.
-- Scale estimates proportionally to follower count — a 500-follower account will NOT get the same reach as a 5,000-follower account
-
----
-
-## LINKEDIN ALGORITHM — HOW IT ACTUALLY WORKS (2025/2026)
-
-### The Distribution Machine
-When a post is published, the algorithm runs it through phases:
-1. **Spam filter** (seconds): Is this spam, engagement bait, or low-quality? If yes → suppressed immediately.
-2. **Initial seed** (0-15 min): Show to ~8-15% of your network. Measure: click-through on "see more", dwell time, early reactions.
-3. **Quality scoring** (15-60 min): Based on early signals, classify as low/medium/high quality. This decides EVERYTHING.
-4. **Amplification or death** (1-4h): High-quality posts get pushed to 2nd and 3rd degree connections. Low-quality posts flatline.
-5. **Extended reach** (4-48h): If engagement sustains, algorithm keeps pushing. This is where "buzz" happens.
-6. **Long tail** (2-7 days): Posts that spark sustained conversation keep getting impressions for days.
-
-### The Signals That Matter (ranked by weight)
-1. **Dwell time** — #1 signal in 2025. How long people stop scrolling and actually READ your post. LinkedIn measures milliseconds.
-2. **"See more" click-through** — If people click to expand your post, massive quality signal. This is why hooks are everything.
-3. **Comment quality & velocity** — Substantive comments (>10 words) count ~5x more than emoji reactions. Comments in first 60 min are critical.
-4. **Saves** — The hidden power metric. Saves signal "this is reference-worthy content." Algorithm weights saves heavily.
-5. **Shares/reposts** — Each share re-enters the post into a new network cluster. Cascading shares = viral mechanics.
-6. **Reactions** — Lowest weight individually, but volume matters as social proof.
-7. **Profile authority** — Your posting history, niche consistency, follower engagement ratio all affect your baseline distribution.
-
-### The First Hour Rule (from Seb Johnson's workshop)
-- 60% of your total reach is determined in the first 60 minutes
-- The algorithm makes its "bet" on your post quality based on early signals
-- If you get strong engagement in hour 1, the algorithm goes aggressive with distribution
-- If hour 1 is flat, the post is essentially dead — it won't recover
-- This means: POST WHEN YOU CAN BE ONLINE TO ENGAGE. Reply to every comment immediately. Pre-notify close contacts.
-
-### Format Hierarchy (data-backed)
-1. **Document/carousel (PDF)** — 6.6% engagement rate. 40x more saves. Best for frameworks, data, step-by-step.
-2. **Native video** — +69% performance. Vertical, <60 sec, face in first 4 sec.
-3. **Text + image** — Most stable (58% of content). 700-900 chars optimal. Real person > branded graphic > stock > AI.
-4. **Text-only** — 800-1,200 chars sweet spot. Highest comment potential. Needs strong hook + formatting.
-5. **Link posts** — PENALIZED. External links kill 40-60% of reach. ALWAYS put links in first comment or add via edit after 1h.
-
-### Hook Mechanics — The 2-Line Test
-Only 2 lines visible before "see more" on mobile. Your hook must:
-- Create an open loop (curiosity gap that demands clicking "see more")
-- Pattern interrupt (say something unexpected that stops the scroll)
-- Be specific (numbers, names, concrete claims beat vague teasers)
-
-Hook archetypes that work:
-- Pattern interrupt: "I got fired. Best thing that happened."
-- Tension/open loop: "My startup failed at 3 AM on a Tuesday."
-- Specific stat: "This one change doubled our applicant quality."
-- Counterintuitive: "Stop posting on LinkedIn." / "The best founders almost didn't apply."
-- Direct address: "If you're thinking about founding — read this first."
-
-Bad hooks (algorithm sees these as low-quality signals): "Excited to share", "Big news!", "Recap of last week", vague setups with no tension.
-
-### Engagement Strategy
-- Comments = ~5x the signal of a reaction
-- Reply to ALL comments within 30 min — keeps thread alive, signals active conversation
-- Engage with 5-10 posts right BEFORE and AFTER publishing — signals you're an active member
-- Never self-comment — detected as self-promo, reach penalty
-- Comments after 90 min = 1.8x more algorithmic impact than early comments
-- Ask genuine questions in your post that people actually want to answer
-
-### Tagging Rules
-- Tag only people likely to engage — 1 tagged person engaging = strong distribution signal
-- Tag naturally in body text, NOT as a CC list
-- Max 3-5 meaningful tags. Mass tagging = farming signal → suppressed
-- Tagged colleagues who engage quickly = free algo boost
-
-### Hashtags (2025: much less important)
-- LinkedIn text detection makes hashtags nearly irrelevant for discovery
-- Max 3 hashtags. More = spam signal
-- Niche-specific only (#deeptech > #startups > #innovation)
-
-### Posting Timing
-- Best: Tuesday-Thursday, 8h-9h30 (B2B France/Europe)
-- Good: 10h-11h, 12h-13h
-- Acceptable: 14h-17h (afternoon)
-- Bad: Friday afternoon, weekends (45% less engagement), after 18h
-- Tuesday = +20% engagement vs Friday
-
-### Buzz & Viral Mechanics
-A post "buzzes" when it triggers a rapid cascade of engagement that overwhelms the algorithm's normal distribution limits. Signs and causes:
-- **Rapid comment velocity** in first 30 min (>10 comments in 30 min for a small account = buzz signal)
-- **High comment-to-reaction ratio** — means people are compelled to RESPOND, not just react
-- **Share cascading** — when someone with a large network shares your post, their audience engages, triggering further distribution
-- **Controversy/debate** — posts that create two opposing camps generate extended comment threads
-- **Emotional resonance** — vulnerability, surprising honesty, relatable struggle
-- **Trend-surfing** — tapping into a moment everyone is talking about
-- **Unexpected format** — doing something the algorithm hasn't seen much of recently
-
-Buzz is NOT random. It's predictable based on: topic heat, emotional charge, debate potential, network density of the poster, and timing relative to news cycles.
-
-### Algorithm Killers
-- External links in post body → -40-60% reach
-- Engagement bait ("Comment YES if you agree") → detected and suppressed
-- Sharing post URL on Slack/Teams → coordinated traffic farming → suppressed
-- Generic content with no niche signal → buried
-- Self-commenting → reach penalty
-- Mass tagging without engagement context → farming signal
-- Posting without being available to engage in first hour → wasted potential
-
----
-
-## YOUR ANALYSIS APPROACH
-
-### As the Content Strategist:
-Score the post on 7 dimensions, give actionable feedback, rewrite the hook.
-
-### As the Algorithm Agent:
-Write a paragraph AS IF you ARE LinkedIn's algorithm. Explain:
-- What you see when this post hits your system
-- What signals you pick up (positive and negative)
-- How you would distribute it through the phases
-- What would make you boost it more or suppress it
-- Use first person ("When I see this post...")
-
----
-
-Respond ONLY with valid JSON, no markdown, no extra text:
+Respond ONLY with valid JSON:
 
 {
   "overall_score": 0-100,
-  "post_type": "Personal Story / Thought Leadership / Data-Driven / Portfolio Win / Recruitment / How-To / Hot Take / News",
-  "target_audience": "who this will resonate with most",
-  "verdict": "2-3 sentences of sharp, honest overall assessment",
+  "post_type": "Personal Story / Thought Leadership / How-To / Portfolio Win / Recruitment / Hot Take / News",
+  "verdict": "2-3 sentences — honest, sharp assessment of the post",
   "scores": {
-    "hook_power": { "grade": "A/B/C/D/F", "score": 0-10, "label": "Hook Power", "detail": "1-line explanation" },
-    "dwell_time": { "grade": "A/B/C/D/F", "score": 0-10, "label": "Dwell Time", "detail": "1-line explanation" },
-    "engagement_trigger": { "grade": "A/B/C/D/F", "score": 0-10, "label": "Engagement Trigger", "detail": "1-line explanation" },
-    "format_fit": { "grade": "A/B/C/D/F", "score": 0-10, "label": "Format Fit", "detail": "1-line explanation" },
-    "algorithm_friendly": { "grade": "A/B/C/D/F", "score": 0-10, "label": "Algo Friendly", "detail": "1-line explanation" },
-    "audience_match": { "grade": "A/B/C/D/F", "score": 0-10, "label": "Audience Match", "detail": "1-line explanation" },
-    "buzz_potential": { "grade": "A/B/C/D/F", "score": 0-10, "label": "Buzz Potential", "detail": "1-line explanation" }
+    "hook": { "score": 0-10, "label": "Hook", "detail": "1-line why" },
+    "content": { "score": 0-10, "label": "Content Quality", "detail": "1-line why" },
+    "engagement": { "score": 0-10, "label": "Engagement Potential", "detail": "1-line why" },
+    "format": { "score": 0-10, "label": "Format & Readability", "detail": "1-line why" }
   },
-  "buzz_analysis": "2-3 sentences explaining WHY this post could or couldn't buzz. Reference specific buzz mechanics.",
-  "algorithm_perspective": "A paragraph written AS the LinkedIn algorithm in first person. 'When I see this post...' Explain how you would process and distribute it.",
-  "expected_impressions": "total estimated range (calibrate to follower count and EF network density)",
-  "expected_engagement_rate": "% vs 3.85% benchmark",
-  "expected_comments": "estimated range",
-  "expected_shares": "estimated range",
-  "pros": ["what is working — specific, min 2, max 4"],
-  "cons": ["what to improve — specific and actionable, min 2, max 4"],
-  "algorithm_killers": ["algo-killing mistakes only — empty [] if none"],
-  "hook_rewrite": "Rewrite ONLY the first 2-3 lines. Keep author voice. Use a proven hook archetype. Create tension/curiosity before see more.",
-  "posting_strategy": "Specific day + time recommendation. Who to tag and why. First-hour playbook. Link strategy recommendation (no link / link in first comment / link added via edit after 1h — NEVER link in post body). Teammate activation plan.",
-  "hashtags": { "tags": ["3 max, niche-specific"], "tip": "one strategic note on hashtag usage" },
-  "visual": {
-    "grade": "A/B/C/D/F or null if no media",
-    "media_type": "image / video / none",
-    "visual_type": "selfie / team / event / branded / stock / AI / screenshot / other",
-    "reach_impact": "one-liner on reach impact",
-    "points": ["2-3 specific observations"],
-    "suggestion": "one recommendation"
-  }
+  "expected_impressions": "range calibrated to follower count",
+  "expected_engagement_rate": "% estimate",
+  "pros": ["2-3 specific strengths"],
+  "cons": ["2-3 specific improvements"],
+  "hook_rewrite": "Rewrite the first 2-3 lines only. Keep the author's voice. Create curiosity.",
+  "posting_tip": "1-2 sentences: best time to post, link strategy, one key tactic",
+  "hashtags": ["3 max"]
 }`;
 
-const GRADE_COLOR = { A:'#16a34a', B:'#2563eb', C:'#ca8a04', D:'#ea580c', F:'#dc2626' };
 
 let mediaData = null;
 
@@ -601,7 +414,7 @@ async function analyze() {
 
   const postingCtx = `Posting day: ${postingDay}\nPosting time: ${postingTime} (user's local time)`;
 
-  const textContent = `Analyze this LinkedIn post draft:\n\n---\n${post}\n---\n${profileCtx ? '\nAuthor profile context:\n' + profileCtx : ''}\n${postingCtx ? '\nPosting parameters:\n' + postingCtx : ''}\n${mediaData ? '\nMedia attached: ' + mediaData.type + ' (' + mediaData.fileName + ')' : '\nNo image or video attached.'}\n\nIMPORTANT: Always include "visual", "algorithm_perspective", "buzz_analysis" objects. Calibrate ALL estimates to the author's follower count and EF network density. Return JSON only.`;
+  const textContent = `Analyze this LinkedIn post draft:\n\n---\n${post}\n---\n${profileCtx ? '\nAuthor context:\n' + profileCtx : ''}\n${postingCtx ? '\n' + postingCtx : ''}\n${mediaData ? '\nMedia: ' + mediaData.type + ' (' + mediaData.fileName + ')' : ''}\n\nReturn JSON only.`;
 
   const msgContent = (mediaData?.type === 'image' && mediaData?.base64)
     ? [{ type:'image', source:{ type:'base64', media_type:mediaData.mimeType, data:mediaData.base64 } }, { type:'text', text:textContent }]
@@ -617,7 +430,7 @@ async function analyze() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 8000,
+        max_tokens: 3000,
         system: SYSTEM_PROMPT,
         messages: [{ role:'user', content:msgContent }]
       })
@@ -644,73 +457,40 @@ function scoreColor(score) {
 }
 
 function renderResults(r) {
-  // Overall score (now 0-100 number)
+  // Score & verdict
   const sc = document.getElementById('res-score');
   const numScore = typeof r.overall_score === 'number' ? r.overall_score : parseInt(r.overall_score) || 0;
   sc.textContent = numScore;
   sc.style.color = scoreColor(numScore / 10);
-  document.getElementById('res-type').textContent = r.post_type;
-  document.getElementById('res-audience').textContent = r.target_audience;
+  document.getElementById('res-type').textContent = r.post_type || '';
   document.getElementById('res-verdict').textContent = r.verdict;
 
-  // 7 score cards with detail
+  // 4 score cards
   document.getElementById('score-grid').innerHTML = Object.values(r.scores || {}).map(s =>
     `<div class="score-card">
-      <div class="score-grade" style="color:${GRADE_COLOR[s.grade]||'#9ca3af'}">${s.grade}</div>
-      <div class="score-num">${s.score}/10</div>
+      <div class="score-grade" style="color:${scoreColor(s.score)}">${s.score}/10</div>
       <div class="score-lbl">${s.label}</div>
       <div class="score-detail">${s.detail||''}</div>
     </div>`
   ).join('');
 
-  // Algorithm perspective
-  document.getElementById('algo-text').textContent = r.algorithm_perspective || '';
+  // Feedback
+  document.getElementById('pros-list').innerHTML = (r.pros||[]).map(i => `<li><span class="pt-dot dot-g"></span><span>${i}</span></li>`).join('');
+  document.getElementById('cons-list').innerHTML = (r.cons||[]).map(i => `<li><span class="pt-dot dot-b"></span><span>${i}</span></li>`).join('');
 
-  // Buzz analysis
-  const buzzScore = r.scores?.buzz_potential;
-  const buzzBadge = document.getElementById('buzz-badge');
-  if (buzzScore) {
-    buzzBadge.innerHTML = `<span style="color:${buzzScore.score >= 7 ? '#f59e0b' : buzzScore.score >= 4 ? '#6b7280' : '#d1d5db'}">${buzzScore.score}/10</span><span style="font-size:13px;font-weight:500;color:#92400e">${buzzScore.score >= 7 ? 'High buzz potential' : buzzScore.score >= 4 ? 'Some buzz potential' : 'Low buzz potential'}</span>`;
-  }
-  document.getElementById('buzz-text').textContent = r.buzz_analysis || '';
+  // Hook rewrite
+  document.getElementById('hook-text').textContent = r.hook_rewrite || '';
 
-  // Performance metrics
+  // Posting tip & hashtags
+  document.getElementById('posting-tip').textContent = r.posting_tip || r.posting_strategy || '';
+  const hashtagTags = Array.isArray(r.hashtags) ? r.hashtags : (r.hashtags?.tags || []);
+  document.getElementById('hashtag-row').innerHTML = hashtagTags.map(h=>`<span class="tag tag-blue">#${h.replace('#','')}</span>`).join('');
+
+  // Performance
   document.getElementById('perf-grid').innerHTML = [
     { label:'Impressions', val:r.expected_impressions, sub:'organic reach' },
     { label:'Engagement Rate', val:r.expected_engagement_rate, sub:'avg: 3.85%' },
-    { label:'Comments', val:r.expected_comments, sub:'est. replies' },
-    { label:'Shares', val:r.expected_shares, sub:'amplification' },
   ].map(m => `<div><div class="perf-lbl">${m.label}</div><div class="perf-val">${m.val}</div><div class="perf-sub">${m.sub}</div></div>`).join('');
-
-  // Pros
-  const prosItems = [...(r.pros||[]), ...(r.visual?.media_type !== 'none' && r.visual?.reach_impact ? ['Visual: '+r.visual.reach_impact] : [])];
-  document.getElementById('pros-list').innerHTML = prosItems.map(i => `<li><span class="pt-dot dot-g"></span><span>${i}</span></li>`).join('');
-
-  // Cons
-  const consItems = [...(r.cons||[]), ...(r.visual?.media_type === 'none' && r.visual?.suggestion ? ['Visual: '+r.visual.suggestion] : [])];
-  document.getElementById('cons-list').innerHTML = consItems.map(i => `<li><span class="pt-dot dot-b"></span><span>${i}</span></li>`).join('');
-
-  // Algorithm killers
-  const kc = document.getElementById('killers-card');
-  const killers = r.algorithm_killers || r.red_flags || [];
-  if (killers.length > 0) {
-    kc.style.display = 'block';
-    document.getElementById('killers-list').innerHTML = killers.map(i => `<li style="color:#dc2626"><span class="pt-dot dot-b"></span><span>${i}</span></li>`).join('');
-  } else { kc.style.display = 'none'; }
-
-  // Hook rewrite
-  document.getElementById('hook-text').textContent = r.hook_rewrite;
-
-  // Posting strategy
-  document.getElementById('strat-list').innerHTML = (r.posting_strategy||'')
-    .split(/(?<=[.!])\s+/).filter(s => s.trim().length > 4)
-    .map(s => `<li><span class="strat-bullet">&mdash;</span><span style="font-size:14px;color:#374151;line-height:1.6">${s.trim()}</span></li>`).join('');
-
-  // Hashtags (handle both old array and new object format)
-  const hashtagTags = Array.isArray(r.hashtags) ? r.hashtags : (r.hashtags?.tags || []);
-  const hashtagTip = typeof r.hashtags === 'object' && !Array.isArray(r.hashtags) ? (r.hashtags?.tip || '') : (r.hashtag_tip || '');
-  document.getElementById('hashtag-row').innerHTML =
-    `<div>${hashtagTags.map(h=>`<span class="tag tag-blue">#${h.replace('#','')}</span>`).join('')}</div><span class="hashtag-tip">${hashtagTip}</span>`;
 
   const res = document.getElementById('results');
   res.style.display = 'block';
@@ -851,7 +631,7 @@ function renderHistory() {
   list.innerHTML = filtered.slice(0, 20).map(h => {
     const d = new Date(h.date);
     const dateStr = d.toLocaleDateString('en-GB', { day:'numeric', month:'short' });
-    const color = GRADE_COLOR[h.score] || '#9ca3af';
+    const color = scoreColor((typeof h.score === 'number' ? h.score : parseInt(h.score) || 0) / 10);
     const profileTag = h.profile && h.profile !== 'No profile'
       ? `<span class="history-profile-tag">${escapeHtml(h.profile)}</span>`
       : '';
