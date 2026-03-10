@@ -68,11 +68,12 @@ textarea { resize: vertical; }
 .overall-score { font-size:56px; font-weight:700; line-height:1; font-family:'JetBrains Mono',monospace; }
 .overall-lbl { font-size:11px; font-weight:500; color:#9ca3af; margin-top:4px; }
 
-.score-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin-bottom:12px; }
-.score-card { background:#fff; border:1px solid rgba(0,0,0,0.04); border-radius:12px; padding:16px 14px; text-align:center; box-shadow:0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02); transition:box-shadow 0.2s ease; }
+.score-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
+.score-card { background:#fff; border:1px solid rgba(0,0,0,0.04); border-radius:12px; padding:16px 18px; display:flex; align-items:center; gap:14px; box-shadow:0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02); transition:box-shadow 0.2s ease; }
 .score-card:hover { box-shadow:0 2px 8px rgba(0,0,0,0.06); }
-.score-grade { font-size:28px; font-weight:700; font-family:'JetBrains Mono',monospace; line-height:1; margin-bottom:6px; }
-.score-lbl { font-size:11px; font-weight:500; color:#6b7280; }
+.score-grade { font-size:26px; font-weight:700; font-family:'JetBrains Mono',monospace; line-height:1; flex-shrink:0; }
+.score-lbl { font-size:12px; font-weight:600; color:#1a1a2e; }
+.score-info { flex:1; min-width:0; }
 
 .perf-card { background:#fff; border:1px solid rgba(0,0,0,0.04); border-radius:12px; padding:1.25rem 1.5rem; margin-bottom:12px; box-shadow:0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02); }
 .perf-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
@@ -148,14 +149,14 @@ textarea { resize: vertical; }
 
 #results { display:none; }
 
-.score-detail { font-size:10px; color:#9ca3af; margin-top:4px; line-height:1.3; max-height:32px; overflow:hidden; }
+.score-detail { font-size:12px; color:#6b7280; margin-top:3px; line-height:1.4; }
 
 
 
 @media (max-width: 640px) {
   #app { padding: 2rem 1rem 4rem; }
   .header-title { font-size: 18px; }
-  .score-grid { grid-template-columns: repeat(2, 1fr); }
+  .score-grid { grid-template-columns: 1fr; }
   .feedback-grid { grid-template-columns: 1fr; }
   .strat-grid { grid-template-columns: 1fr; }
   .grid2 { grid-template-columns: 1fr; }
@@ -502,12 +503,14 @@ function renderResults(r) {
   document.getElementById('res-type').textContent = r.post_type || '';
   document.getElementById('res-verdict').textContent = r.verdict;
 
-  // 4 score cards
+  // 4 score cards (horizontal layout)
   document.getElementById('score-grid').innerHTML = Object.values(r.scores || {}).map(s =>
     `<div class="score-card">
       <div class="score-grade" style="color:${scoreColor(s.score)}">${s.score}/10</div>
-      <div class="score-lbl">${s.label}</div>
-      <div class="score-detail">${s.detail||''}</div>
+      <div class="score-info">
+        <div class="score-lbl">${s.label}</div>
+        <div class="score-detail">${s.detail||''}</div>
+      </div>
     </div>`
   ).join('');
 
