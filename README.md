@@ -34,3 +34,7 @@ Done. Your app is live at `https://your-project.vercel.app`
 ├── package.json
 └── vercel.json
 ```
+
+## Author
+
+**Faustin Havard** — [LinkedIn](https://www.linkedin.com/in/faustin-havard-293a25196/?locale=fr)
